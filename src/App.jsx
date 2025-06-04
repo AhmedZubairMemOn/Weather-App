@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import axios from "axios";
-import image from './assets/download.jpeg'
 
 const key = "636ee87aad4778c0051159b4d45de526";
 
@@ -17,16 +16,12 @@ function App() {
   const [lon, setLon] = useState("")
   const [lat, setLat] = useState("")
   const [icon, setIcon] = useState("")
-  const [bgImage, setBgImage] = useState("")
+ 
 
   useEffect(() => {
     getUserLocation()
   }, []);
 
-  useEffect(()=>{
-    setBgImage(getBackgroundImage(weather))
-  },[weather])
-  
   const getBackgroundImage = (weatherType) => {
   const weatherImages = {
     Clear: "https://media.istockphoto.com/id/1007768414/photo/blue-sky-with-bright-sun-and-clouds.jpg?s=612x612&w=0&k=20&c=MGd2-v42lNF7Ie6TtsYoKnohdCfOPFSPQt5XOz4uOy4=",
@@ -42,9 +37,19 @@ function App() {
 
  return `url(${weatherImages[weatherType] || "https://images.unsplash.com/photo-1508923567004-3a6b8004f3d9?auto=format&fit=crop&w=1950&q=80"})`;
 };
+  useEffect(()=>{
+    setBgImage(getBackgroundImage(weather))
+  },[weather])
+
+   const [bgImage, setBgImage] = useState(getBackgroundImage("clear"))
+  
 
 
   const fetchData = async () => {
+    if (!name.trim()) {
+    alert("Please enter a city name");
+    return;
+  }
     try {
       const response = await axios.get(
         `https://api.openweathermap.org/data/2.5/weather?q=${
@@ -60,6 +65,7 @@ function App() {
 setBgImage(getBackgroundImage(response.data.weather[0].main));
     } catch (err) {
       console.log(err);
+      alert("Invalid city name. Please try again.");
     }
   };
 
